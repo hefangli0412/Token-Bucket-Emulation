@@ -1,41 +1,63 @@
-#ifndef _CORE_H_
-#define _CORE_H_
+/*
+ * Author:      William Chia-Wei Cheng (bill.cheng@acm.org)
+ *
+ * @(#)$Id: my402list.h,v 1.1 2013/08/22 04:14:30 william Exp $
+ */
 
-#include <stdio.h>
-#include <stdlib.h>
+#ifndef _MY402LIST_H_
+#define _MY402LIST_H_
+
 #include "cs402.h"
-#include "my402list.h"
+#include <stdlib.h>
+#include <stdio.h>
 
-typedef struct Q1 {
-	int packet_no;
-	int inv_m;
-	int P;
-} Q1;
+typedef struct tagMy402ListElem {
+    void *obj;
+    struct tagMy402ListElem *next;
+    struct tagMy402ListElem *prev;
+} My402ListElem;
 
-typedef struct Q2 {
-	int packet_no;
-	int inv_m;  
-} Q2;
+typedef struct tagMy402List {
+    int num_members;
+    My402ListElem anchor;
 
-typedef struct packet {
-	int packet_no;
-	double arv_time;
-	double enter_Q1;
-	double leave_Q1;
-	double enter_Q2;
-	double begin_S;
-	double leave_S;
-} packet;
+    /* You do not have to set these function pointers */
+ /*   int  (*Length)(struct tagMy402List *);
+    int  (*Empty)(struct tagMy402List *);
 
-typedef void (*sighandler_t)(int);
-sighandler_t sigset(int signo, sighandler_t handler);
+    int  (*Append)(struct tagMy402List *, void*);
+    int  (*Prepend)(struct tagMy402List *, void*);
+    void (*Unlink)(struct tagMy402List *, My402ListElem*);
+    void (*UnlinkAll)(struct tagMy402List *);
+    int  (*InsertBefore)(struct tagMy402List *, void*, My402ListElem*);
+    int  (*InsertAfter)(struct tagMy402List *, void*, My402ListElem*);
 
-struct timeval tim;
-double t;
-double t0;
+    My402ListElem *(*First)(struct tagMy402List *);
+    My402ListElem *(*Last)(struct tagMy402List *);
+    My402ListElem *(*Next)(struct tagMy402List *, My402ListElem *cur);
+    My402ListElem *(*Prev)(struct tagMy402List *, My402ListElem *cur);
 
-pthread_t thread_id[3];
-pthread_mutex_t mutex;
-pthread_cond_t cond;
+    My402ListElem *(*Find)(struct tagMy402List *, void *obj);
+*/
+} My402List;
 
-#endif
+extern int  My402ListLength(My402List*);
+extern int  My402ListEmpty(My402List*);
+
+extern int  My402ListAppend(My402List*, void*);
+extern int  My402ListPrepend(My402List*, void*);
+extern void My402ListUnlink(My402List*, My402ListElem*);
+extern void My402ListUnlinkAll(My402List*);
+extern int  My402ListInsertAfter(My402List*, void*, My402ListElem*);
+extern int  My402ListInsertBefore(My402List*, void*, My402ListElem*);
+
+extern My402ListElem *My402ListFirst(My402List*);
+extern My402ListElem *My402ListLast(My402List*);
+extern My402ListElem *My402ListNext(My402List*, My402ListElem*);
+extern My402ListElem *My402ListPrev(My402List*, My402ListElem*);
+
+extern My402ListElem *My402ListFind(My402List*, void*);
+
+extern int My402ListInit(My402List*);
+
+#endif /*_MY402LIST_H_*/
