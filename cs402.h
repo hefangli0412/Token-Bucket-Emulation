@@ -1,41 +1,38 @@
-#ifndef _CORE_H_
-#define _CORE_H_
+/*
+ * Author:      William Chia-Wei Cheng (bill.cheng@acm.org)
+ *:
+ * @(#)$Id: cs402.h,v 1.1 2013/08/22 04:14:29 william Exp $
+ */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "cs402.h"
-#include "my402list.h"
+#ifndef _CS402_H_
+#define _CS402_H_
 
-typedef struct Q1 {
-	int packet_no;
-	int inv_m;
-	int P;
-} Q1;
+#ifndef NULL
+#define NULL 0L
+#endif /* ~NULL */
 
-typedef struct Q2 {
-	int packet_no;
-	int inv_m;  
-} Q2;
+#ifndef TRUE
+#define FALSE 0
+#define TRUE 1
+#endif /* ~TRUE */
 
-typedef struct packet {
-	int packet_no;
-	double arv_time;
-	double enter_Q1;
-	double leave_Q1;
-	double enter_Q2;
-	double begin_S;
-	double leave_S;
-} packet;
+#ifdef WIN32
+#define DIR_SEP '\\'
+#else /* ~WIN32 */
+#define DIR_SEP '/'
+#endif /* WIN32 */
 
-typedef void (*sighandler_t)(int);
-sighandler_t sigset(int signo, sighandler_t handler);
+#ifndef max
+#define max(A,B) (((A)>(B)) ? (A) : (B))
+#define min(A,B) (((A)>(B)) ? (B) : (A))
+#endif /* ~max */
 
-struct timeval tim;
-double t;
-double t0;
+#ifndef round
+#define round(X) (((X) >= 0) ? (int)((X)+0.5) : (int)((X)-0.5))
+#endif /* ~round */
 
-pthread_t thread_id[3];
-pthread_mutex_t mutex;
-pthread_cond_t cond;
+#ifndef MAXPATHLENGTH
+#define MAXPATHLENGTH 256
+#endif /* ~MAXPATHLENGTH */
 
-#endif
+#endif /*_CS402_H_*/
