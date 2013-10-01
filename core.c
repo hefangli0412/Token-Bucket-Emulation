@@ -70,17 +70,12 @@ void *thr_fn1()
 			s->P = item_2;
 			s->inv_m = item_3;
 		}
-		packet_arv++;
 
-		/* lock */
-		pthread_mutex_lock(&mutex);
 
-		/* create packet packet and record arv_time and add to packet list */
 		packet *s2;
 		s2 = (packet*) malloc(sizeof(packet));
 		if (s2 != NULL) {
 			s2->packet_no = s->packet_no;
-			s2->arv_time = t;
 			s2->enter_Q1 = 0;
 			s2->leave_Q1 = 0;
 			s2->enter_Q2 = 0;
@@ -88,19 +83,27 @@ void *thr_fn1()
 			s2->leave_S = 0;
 		}
 
+
+		/* lock */
+		pthread_mutex_lock(&mutex);
+
+
+		packet_arv++;
+		/* create packet packet and record arv_time and add to packet list */
+
 		gettimeofday(&tim, NULL);		
-		t = tim.tv_sec + (tim.tv_usec/1000000.0);
+		t = tim.tv_sec * 1000.0 + (tim.tv_usec / 1000.0);
 		if (k == 0) {
 			printf("%012.3fms: p%d arrives, needs %d tokens, inter-arrival time = %.3fms\n",
 					t - t0, s->packet_no, s->P, t - t0);
-
+			s2->arv_time = t;
 			arv_time = arv_time + t - t0;
 			arv_num++;
 		} else {
 			printf("%012.3fms: p%d arrives, needs %d tokens, inter-arrival time = %.3fms\n",
 			t - t0, s->packet_no, s->P, 
 			t - ((packet*) (My402ListLast(&list_packet)->obj))->arv_time);
-		
+			s2->arv_time = t;		
 			arv_time = arv_time + t - ((packet*) (My402ListLast(&list_packet)->obj))->arv_time;
 			arv_num++;
 		}
@@ -113,7 +116,7 @@ void *thr_fn1()
 
 		/* record enter_Q1_time */
 		gettimeofday(&tim, NULL);		
-		t = tim.tv_sec + (tim.tv_usec/1000000.0);
+		t = tim.tv_sec * 1000.0 + (tim.tv_usec / 1000.0);
 		s2->enter_Q1 = t;
 		printf("%012.3fms: p%d enters Q1\n", t - t0, s->packet_no);	
 
@@ -154,7 +157,7 @@ void *thr_fn1()
 			token_cur = token_cur - item_01;
 
 			gettimeofday(&tim, NULL);	
-			t = tim.tv_sec + (tim.tv_usec/1000000.0);
+			t = tim.tv_sec * 1000.0 + (tim.tv_usec / 1000.0);
 			R1->leave_Q1 = t;
 			printf("%012.3fms: p%d leaves Q1, time in Q1 = %.3fms, token bucket now has %d tokens\n", 
 				t - t0, item_03, t - R1->enter_Q1, token_cur);
@@ -163,7 +166,7 @@ void *thr_fn1()
 			My402ListAppend(&list_Q2, s1);
 
 			gettimeofday(&tim, NULL);	
-			t = tim.tv_sec + (tim.tv_usec/1000000.0);
+			t = tim.tv_sec * 1000.0 + (tim.tv_usec / 1000.0);
 			R1->enter_Q2 = t;
 			printf("%012.3fms: p%d enters Q2\n", t - t0, item_03);
 
@@ -196,7 +199,7 @@ void *thr_fn2()
 			token_all++;
 
 			gettimeofday(&tim, NULL);	// token_arrive
-			t = tim.tv_sec + (tim.tv_usec/1000000.0);
+			t = tim.tv_sec * 1000.0 + (tim.tv_usec / 1000.0);
 			printf("%012.3fms: token t%d arrives, token bucket now has %d tokens\n", 
 					t - t0, token_all, token_cur);
 			goto b;
@@ -208,7 +211,7 @@ void *thr_fn2()
 		token_count++;
 
 		gettimeofday(&tim, NULL);	// token_arrive
-		t = tim.tv_sec + (tim.tv_usec/1000000.0);
+		t = tim.tv_sec * 1000.0 + (tim.tv_usec / 1000.0);
 		printf("%012.3fms: token t%d arrives, token bucket now has %d tokens\n", 
 				t - t0, token_all, token_cur);
 
@@ -245,7 +248,7 @@ void *thr_fn2()
 			token_cur = token_cur - item_1;	
 
 			gettimeofday(&tim, NULL);	
-			t = tim.tv_sec + (tim.tv_usec/1000000.0);
+			t = tim.tv_sec * 1000.0 + (tim.tv_usec / 1000.0);
 			R1->leave_Q1 = t;
 			printf("%012.3fms: p%d leaves Q1, time in Q1 = %.3fms, token bucket now has %d tokens\n", 
 					t - t0, item_3, t - R1->enter_Q1, token_cur);
@@ -254,7 +257,7 @@ void *thr_fn2()
 			My402ListAppend(&list_Q2, s1);
 
 			gettimeofday(&tim, NULL);	
-			t = tim.tv_sec + (tim.tv_usec/1000000.0);
+			t = tim.tv_sec * 1000.0 + (tim.tv_usec / 1000.0);
 			R1->enter_Q2 = t;
 			printf("%012.3fms: p%d enters Q2\n", t - t0, item_3);
 
@@ -300,7 +303,7 @@ void *thr_fn3()
 		My402ListUnlink(&list_Q2, My402ListFirst(&list_Q2));
 
 		gettimeofday(&tim, NULL);	
-		t = tim.tv_sec + (tim.tv_usec/1000000.0);
+		t = tim.tv_sec * 1000.0 + (tim.tv_usec / 1000.0);
 		R1->begin_S = t;
 		printf("%012.3fms: p%d begin service at S, time in Q2 = %.3fms\n", 
 				t - t0, item_2, t - R1->enter_Q2);
@@ -316,7 +319,7 @@ void *thr_fn3()
 
 		/* leave S and record */
 		gettimeofday(&tim, NULL);	
-		t = tim.tv_sec + (tim.tv_usec/1000000.0);
+		t = tim.tv_sec * 1000.0 + (tim.tv_usec / 1000.0);
 		R1->leave_S = t;
 		srv_time = srv_time + t - R1->begin_S;
 		srv_num++;
@@ -333,11 +336,13 @@ void *thr_fn3()
 
 void calc()
 {
+	arv_time = arv_time * 0.001;
+	srv_time = srv_time * 0.001;
 	printf("\nStatistics:\n");
 	avr_arv_time = arv_time / (double)arv_num;
-	printf("   average packet inter-arrival time = %.6g\n", avr_arv_time);
+	printf("   average packet inter-arrival time = %.6gsec\n", avr_arv_time);
 	avr_srv_time = srv_time / (double)srv_num;
-	printf("   average packet service time = %.6g\n\n", avr_srv_time);
+	printf("   average packet service time = %.6gsec\n\n", avr_srv_time);
 
 	double Q1_time_all = 0;
 	double Q2_time_all = 0;
@@ -347,32 +352,38 @@ void calc()
 
 	My402ListElem *R = My402ListFirst(&list_packet);
 	packet* S = (packet*) (R->obj);
-	while ( ((S->leave_Q1 == 0) || (R->next == &list_packet.anchor)) == 0 ) {
-		Q1_time_all = Q1_time_all + S->leave_Q1 - S->enter_Q1; 
-		R = My402ListNext(&list_packet, R);
+	for (; (R != &list_packet.anchor) ;(R = R->next) ) {
+		Q1_time_all = Q1_time_all + S->leave_Q1 - S->enter_Q1; 	
+	
 	}
+	Q1_time_all = Q1_time_all * 0.001;
 
 	R = My402ListFirst(&list_packet);
 	S = (packet*) (R->obj);
-	while ( ((S->begin_S == 0) || (R->next == &list_packet.anchor)) == 0 ) {
+	for (; (R != &list_packet.anchor) ;(R = R->next) ) {
 		Q2_time_all = Q2_time_all + S->begin_S - S->enter_Q2; 
-		R = My402ListNext(&list_packet, R);
+	
 	}
+	Q2_time_all = Q2_time_all * 0.001;
 
 	R = My402ListFirst(&list_packet);
 	S = (packet*) (R->obj);
-	while ( ((S->leave_S == 0) || (R->next == &list_packet.anchor)) == 0 ) {
+	for (; (R != &list_packet.anchor) ;(R = R->next) ) {
 		S_time_all = S_time_all + S->leave_S - S->begin_S; 
-		R = My402ListNext(&list_packet, R);
+	
+
 	}
+	S_time_all = S_time_all * 0.001;
 
 	R = My402ListFirst(&list_packet);
 	S = (packet*) (R->obj);
-	while ( ((S->leave_S == 0) || (R->next == &list_packet.anchor)) == 0 ) {
+	for (; (R != &list_packet.anchor) ;(R = R->next) ) {
 		sys_time_all = sys_time_all + S->leave_S - S->arv_time; 
 		tmp = tmp + (S->leave_S - S->arv_time) * (S->leave_S - S->arv_time);
-		R = My402ListNext(&list_packet, R);
+	
 	}
+	sys_time_all = sys_time_all * 0.001;
+	tmp = tmp * 0.001 * 0.001;
 
 	double avr_Q1_num = Q1_time_all / sys_time_all;
 	printf("   average number of packets in Q1 = %.6g\n", avr_Q1_num);
@@ -380,8 +391,8 @@ void calc()
 	printf("   average number of packets in Q2 = %.6g\n", avr_Q2_num);
 	double avr_srv_num = S_time_all / sys_time_all;
 	printf("   average number of packets at S = %.6g\n\n", avr_srv_num);
-	double avr_sys_time = sys_time_all / srv_time;
-	printf("   average time a packet spent in system = %.6g\n", avr_sys_time);
+	double avr_sys_time = sys_time_all / (double)srv_num;
+	printf("   average time a packet spent in system = %.6gsec\n", avr_sys_time);
 	double sd_sys_time = sqrt(tmp / (double)srv_num + avr_sys_time * avr_sys_time);
 	printf("   standard deviation for time spent in system = %.6g\n\n", sd_sys_time);
 
@@ -435,7 +446,7 @@ int main(int argc, char *argv[])
 	}
 
 	gettimeofday(&tim, NULL);
-	t0 = tim.tv_sec + (tim.tv_usec/1000000.0);
+	t0 = tim.tv_sec * 1000.0 + (tim.tv_usec/1000.0);
 	printf("%012.3fms: emulation begins\n", t0 - t0);	
 
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
@@ -449,6 +460,7 @@ int main(int argc, char *argv[])
 	calc();
 
 	pthread_mutex_destroy(&mutex);
-	
+	pthread_cond_destroy(&cond);
+
 	return 0;
 }
