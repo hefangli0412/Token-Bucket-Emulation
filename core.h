@@ -32,7 +32,7 @@ sighandler_t sigset(int signo, sighandler_t handler);
 
 struct timeval tim;
 double t;
-double t0;
+double t0, t00;
 
 pthread_t thread_id[3];
 pthread_mutex_t mutex;
