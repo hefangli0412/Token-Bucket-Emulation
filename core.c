@@ -176,7 +176,7 @@ void *thr_fn1()
 		/* unlock */
 		a: pthread_mutex_unlock(&mutex);	
 	}
-	printf("Thread 1 terminated.\n");
+	//printf("Thread 1 terminated.\n");
 	flag_thr1++;
 	pthread_testcancel();
 
@@ -268,7 +268,7 @@ void *thr_fn2()
 	}
 
 		flag_thr2++;
-		printf("Thread 2 terminated.\n");
+		//printf("Thread 2 terminated.\n");
 		return (void*) 0;
 }
 
@@ -333,12 +333,13 @@ void *thr_fn3()
 
 void calc()
 {
-	
+	/*
 	printf("list_packet: %d\n", My402ListLength(&list_packet));
 	printf("list_Q1: %d\n", My402ListLength(&list_Q1));
 	printf("list_Q2: %d\n", My402ListLength(&list_Q2));
 	printf("packet_arv: %d\n", packet_arv);
 	printf("srv_num: %d\n", srv_num);
+	*/
 
 	arv_time = arv_time * 0.001;
 	srv_time = srv_time * 0.001;
@@ -418,7 +419,7 @@ void calc()
 
 void handler(int signo)
 {
-	printf("Opps.\n");
+	//printf("Opps.\n");
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 	pthread_cancel(thread_id[0]);
 	pthread_cancel(thread_id[1]);
@@ -468,11 +469,11 @@ int main(int argc, char *argv[])
 	for (i = 0; i < 3; i++) {
 		pthread_join(thread_id[i], NULL);
 	}
-	printf("Thread 3 terminated.\n");
+	//printf("Thread 3 terminated.\n");
 
 	gettimeofday(&tim, NULL);
 	t00 = tim.tv_sec * 1000.0 + (tim.tv_usec/1000.0);
-	printf("%012.3fms: emulation endns\n", t00 - t0);
+	//printf("%012.3fms: emulation endns\n", t00 - t0);
 
 	calc();
 
